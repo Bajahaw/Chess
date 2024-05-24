@@ -5,4 +5,4 @@ This is a Java-based chess game implemented using Swing for the graphical user i
 
 The project is built using Ant, with the build configuration specified in the [build.xml](build.xml) file. Unit tests are run using JUnit, with the JUnit library located in the `lib/junit_5` directory.
 
-This dicription is written by chatgpt and does not represent the author's idea for the project, It is just for the beauty of the page. If you have a problem or suggestion feel free to ask or use the issues section.
+This description is written by chatgpt and does not represent the author's idea for the project, It is just for the beauty of the page. If you have a problem or suggestion feel free to ask or use the issues section.
