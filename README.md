@@ -1,5 +1,5 @@
-SIMPLE CHESS GUI 
-# Chess
+
+# Just SIMPLE CHESS GUI 
 
 This is a Java-based chess game implemented using Swing for the graphical user interface. The game includes all the standard rules of chess, including castling and pawn promotion. The `Board` class in [src/chess/Board.java](src/chess/Board.java) represents the chessboard and handles user interactions via mouse events. Each piece on the board is an instance of a class that extends the `Piece` class in [src/chess/Piece.java](src/chess/Piece.java). The game alternates between white and black turns, which is managed by the `isWhiteTurn` variable in the `Board` class.
 
