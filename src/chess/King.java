@@ -62,15 +62,14 @@ public class King extends Piece{
                 }
             }
         }
-//        for(int i=0; i<validMoves.size(); i++){
-//            temp = Arrays.copyOf(position, position.length);
-//            temp[square] = null;
-//            temp[validMoves.get(i)] = this;
-//            //if(inCheck)
-//            if(Board.isSquareInCheck(validMoves.get(i), temp)){
-//                validMoves.remove(i);
-//            }
-//        }
+        if(isWhite){
+            if(Board.wKingSideCastle) validMoves.add(62);
+            if(Board.wQueenSideCastle) validMoves.add(58);
+        }
+        else{
+            if(Board.bKingSideCastle) validMoves.add(6);
+            if(Board.bQueenSideCastle) validMoves.add(2);
+        }
     }
     @Override
     boolean isValidMove(int sqr1,int sqr2,Piece[] position) {
@@ -86,7 +85,7 @@ public class King extends Piece{
                 }
             }
             for(Integer move : validMoves){
-                System.out.println("King moves: "+move + " " );
+                System.out.println("King moves: "+move + " Not moved: " + notMoved );
                 if(sqr2==move)
                     return true;
             }
