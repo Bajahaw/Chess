@@ -273,6 +273,25 @@ public class Board extends JPanel implements MouseListener{
         System.out.println("Checkmate: " + checkmate);
         return checkmate;
     }
+    
+    public void isDraw(int kSquare, Piece[] position) {
+        boolean draw = true;
+        if(((King)position[kSquare]).inCheck){
+            draw = false;
+        }
+        else{
+            for(Piece piece : position){
+                if(piece != null && piece.isWhite == isWhiteTurn){
+                    piece.isValidMove(piece.square, piece.square, position);
+                    if(piece.validMoves.size()>0){
+                        draw = false;
+                        break;
+                    }
+                }
+            }
+        }
+        System.out.println("Draw: " + draw);
+    }
 
     private void movePiece(Piece selectedPiece,int sqr1, int square) {
         if(selectedPiece instanceof Pawn){
@@ -345,6 +364,7 @@ public class Board extends JPanel implements MouseListener{
             }
             else if(((King)pieces[King.bKSquare]).inCheck && !isSquareInCheck(King.bKSquare, pieces))
                 ((King)pieces[King.bKSquare]).inCheck = false;
+            isDraw(King.bKSquare, pieces);
         }
         else{
             isWhiteTurn = true;
@@ -355,6 +375,7 @@ public class Board extends JPanel implements MouseListener{
             }
             else if(((King)pieces[King.wKSquare]).inCheck && !isSquareInCheck(King.wKSquare, pieces))
                 ((King)pieces[King.wKSquare]).inCheck = false;
+            isDraw(King.wKSquare, pieces);
         }
         
         checkCastling(pieces);
@@ -362,6 +383,7 @@ public class Board extends JPanel implements MouseListener{
         hideHints();
     }
     
+
     @Override
     public void mousePressed(MouseEvent e) {
         
