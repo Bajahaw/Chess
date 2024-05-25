@@ -48,7 +48,7 @@ public class Board extends JPanel implements MouseListener{
             else
                 setSquare(i, square[i-1].getBackground()==firstColor? secondColor : firstColor);
         }
-        setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1");
+        setFEN("7k/6rr/8/8/8/8/8/B3KQ1R w - - 0 1");
         setPiecesMouseListener();
         
     }
@@ -169,23 +169,25 @@ public class Board extends JPanel implements MouseListener{
     public boolean isValidMove( int sqr1, int sqr2){
         //System.out.println("BK: "+King.bKSquare);
         //System.out.println("WH: "+King.wKSquare);
+        if(isCheckmate(isWhiteTurn? King.wKSquare:King.bKSquare, pieces))
+            System.out.println("Checkmate!!");
         if(isWhiteTurn^pieces[sqr1].isWhite)
             return false;
         return pieces[sqr1]!=null? pieces[sqr1].isValidMove(sqr1, sqr2, pieces): false;
     }
 
     public static boolean isSquareInCheck(int square, Piece[] board){
-        System.out.println("Checking square: " + square);
+        //System.out.println("Checking square: " + square);
         for(Piece piece : board){
             if(piece != null && piece.isWhite != isWhiteTurn ){
                 piece.calculateValidMoves(piece.square, board);
                 for(int move : piece.validMoves) if(move == square){
-                    System.out.println("Check!!");
+                    //System.out.println("Check!!");
                     return true;
                 }
             }
         }
-        System.out.println("no check!!");
+        //System.out.println("no check!!");
         return false;
     }
 
@@ -198,7 +200,7 @@ public class Board extends JPanel implements MouseListener{
         containor.repaint();
     }
     
-    public void checkCastling(Piece[] position){
+    private void checkCastling(Piece[] position){
         wQueenSideCastle = false;
         wKingSideCastle = false;
         bQueenSideCastle = false;
@@ -247,6 +249,29 @@ public class Board extends JPanel implements MouseListener{
                 else bKingSideCastle = false;
             }
         }
+    }
+
+    public boolean isCheckmate(int kingSquare, Piece[] position){
+        boolean checkmate = ((King)position[kingSquare]).inCheck;
+        if(((King)position[kingSquare]).inCheck){
+            position[kingSquare].isValidMove(kingSquare, kingSquare, position);
+            if(position[kingSquare].validMoves.size()>0){
+                checkmate = false;
+            }
+            else{
+                for(Piece piece : position){
+                    if(piece != null && piece.isWhite == isWhiteTurn){
+                        piece.isValidMove(piece.square, piece.square, position);
+                        if(piece.validMoves.size()>0){
+                            checkmate = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("Checkmate: " + checkmate);
+        return checkmate;
     }
 
     private void movePiece(Piece selectedPiece,int sqr1, int square) {
@@ -314,18 +339,22 @@ public class Board extends JPanel implements MouseListener{
         if(isWhiteTurn){
             isWhiteTurn = false;
             
-            if(isSquareInCheck(King.bKSquare, pieces))
-            ((King)pieces[King.bKSquare]).inCheck = true;
-            else if(((King)pieces[King.bKSquare]).inCheck == true)
-            ((King)pieces[King.bKSquare]).inCheck = false;
+            if(isSquareInCheck(King.bKSquare, pieces) && !((King)pieces[King.bKSquare]).inCheck){
+                ((King)pieces[King.bKSquare]).inCheck = true;
+                isCheckmate(King.bKSquare, pieces);
+            }
+            else if(((King)pieces[King.bKSquare]).inCheck && !isSquareInCheck(King.bKSquare, pieces))
+                ((King)pieces[King.bKSquare]).inCheck = false;
         }
         else{
             isWhiteTurn = true;
             
-            if(isSquareInCheck(King.wKSquare, pieces))
-            ((King)pieces[King.wKSquare]).inCheck = true;
-            else if(((King)pieces[King.wKSquare]).inCheck == true)
-            ((King)pieces[King.wKSquare]).inCheck = false;
+            if(isSquareInCheck(King.wKSquare, pieces) && !((King)pieces[King.wKSquare]).inCheck){
+                ((King)pieces[King.wKSquare]).inCheck = true;
+                isCheckmate(King.wKSquare, pieces);
+            }
+            else if(((King)pieces[King.wKSquare]).inCheck && !isSquareInCheck(King.wKSquare, pieces))
+                ((King)pieces[King.wKSquare]).inCheck = false;
         }
         
         checkCastling(pieces);

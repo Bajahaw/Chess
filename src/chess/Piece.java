@@ -53,7 +53,7 @@ public abstract class Piece extends JLabel implements MouseListener,MouseMotionL
                 }
             }
             for(Integer move : validMoves){
-                System.out.println("Piece moves: "+move + " " );
+                //System.out.println("Piece moves: "+move + " " );
                 if(sqr2==move)
                     return true;
             }
