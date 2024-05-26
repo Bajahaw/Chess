@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -15,6 +17,7 @@ public class Board extends JPanel implements MouseListener{
     JPanel containor;
     JLabel[] square = new JLabel[64];
     Piece[] pieces = new Piece[64];
+    ArrayList<String> moves = new ArrayList<>();
     Piece selectedPiece;
 //    int[] blackPieces = new int[16];
 //    int[] whitePieces = new int[16];
@@ -293,7 +296,79 @@ public class Board extends JPanel implements MouseListener{
         System.out.println("Draw: " + draw);
     }
 
-    private void movePiece(Piece selectedPiece,int sqr1, int square) {
+    private String moveToString(Piece selectedPiece, int sqr1, int square) {
+        String move = "";
+        if(selectedPiece instanceof King){
+            if(square==sqr1+2){
+                move = "O-O";
+            }
+            if(square==sqr1-2){
+                move = "O-O-O";
+            }
+        }
+        if(selectedPiece instanceof Pawn){
+            if(pieces[square]!=null){
+                move = (char)(sqr1%8+97) + "x" + (char)(square%8+97) + (char)(8-sqr1/8) + (char)(8-square/8);
+            }
+            else{
+                move = String.valueOf((char)(square%8+97)) + String.valueOf((char)(8-square/8));
+            }
+        }
+        if(selectedPiece instanceof Rook){
+            move = "R";
+            if(selectedPiece.isWhite){
+                if(sqr1==0){
+                    move += "a";
+                }
+                else if(sqr1==7){
+                    move += "h";
+                }
+            }
+            else{
+                if(sqr1==56){
+                    move += "a";
+                }
+                else if(sqr1==63){
+                    move += "h";
+                }
+            }
+            if(pieces[square]!=null){
+                move += "x";
+            }
+            move += (char)(square%8+97) + (char)(8-square/8);
+        }
+        if(selectedPiece instanceof Knight){
+            move = "N";
+            if(pieces[square]!=null){
+                move += "x";
+            }
+            move += (char)(square%8+97) + (char)(8-square/8);
+        }
+        if(selectedPiece instanceof Bishop){
+            move = "B";
+            if(pieces[square]!=null){
+                move += "x";
+            }
+            move += (char)(square%8+97) + (char)(8-square/8);
+        }
+        if(selectedPiece instanceof Queen){
+            move = "Q";
+            if(pieces[square]!=null){
+                move += "x";
+            }
+            move += (char)(square%8+97) + (char)(8-square/8);
+        }
+            if(selectedPiece instanceof King){
+                move = "K";
+                if(pieces[square]!=null){
+                    move += "x";
+                }
+                move += (char)(square%8+97) + (char)(8-square/8);
+            }
+            return move;
+        } 
+        private void movePiece(Piece selectedPiece,int sqr1, int square) {
+        moves.add(moveToString(selectedPiece, sqr1, square));
         if(selectedPiece instanceof Pawn){
             if(((sqr1>7 && sqr1<16)&&(((Pawn) selectedPiece).isWhite))||((sqr1>47 && sqr1<56)&&!(((Pawn) selectedPiece).isWhite))){
                 promotePawn((Pawn)selectedPiece, sqr1, square);
