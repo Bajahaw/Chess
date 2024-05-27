@@ -65,81 +65,9 @@ public class Bishop extends Piece{
                 break;
             }
         }
-//        for(int i=0; i<validMoves.size(); i++){
-//            temp = Arrays.copyOf(position, position.length);
-//            temp[square] = null;
-//            temp[validMoves.get(i)] = this;
-//            //if(((King)temp[isWhite? King.wKSquare:King.bKSquare]).inCheck)// not here
-//            if(Board.isSquareInCheck(isWhite? King.wKSquare:King.bKSquare, temp)){
-//                validMoves.remove(i);
-//            }
-//        }
-//        if(initialSquare%8!=0){
-//            while(pointer >= 0){
-//                if(position[pointer] == null){
-//                    validMoves.add(pointer);
-//                    if(pointer%8 == 0){
-//                        break;
-//                    }
-//                }
-//                else{
-//                    if(position[pointer].isWhite != isWhite){
-//                        validMoves.add(pointer);
-//                    }
-//                    break;
-//                }
-//                pointer -= 9;
-//            }
-//            pointer = initialSquare+7;
-//            while(pointer < 64){
-//                if(position[pointer] == null){
-//                    validMoves.add(pointer);
-//                    if(pointer%8 == 0){
-//                        break;
-//                    }
-//                }
-//                else{
-//                    if(position[pointer].isWhite != isWhite){
-//                        validMoves.add(pointer);
-//                    }
-//                    break;
-//                }
-//                pointer += 7;
-//            }
-//        }
-//        if(initialSquare%8!=7){
-//            pointer = initialSquare-7;
-//            while(pointer >= 0){
-//                if(position[pointer] == null){
-//                    validMoves.add(pointer);
-//                    if(pointer%8 == 7){
-//                        break;
-//                    }
-//                }
-//                else{
-//                    if(position[pointer].isWhite != isWhite){
-//                        validMoves.add(pointer);
-//                    }
-//                    break;
-//                }
-//                pointer -= 7;
-//            }
-//            pointer = initialSquare+9;
-//            while(pointer < 64){
-//                if(position[pointer] == null){
-//                    validMoves.add(pointer);
-//                    if(pointer%8 == 7){
-//                        break;
-//                    }
-//                }
-//                else{
-//                    if(position[pointer].isWhite != isWhite){
-//                        validMoves.add(pointer);
-//                    }
-//                    break;
-//                }
-//                pointer += 9;
-//            }
-//        }
+    }
+    @Override
+    public String toString() {
+        return "B";
     }
 }

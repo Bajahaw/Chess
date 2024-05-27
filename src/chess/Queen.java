@@ -37,14 +37,9 @@ public class Queen extends Piece{
                 }
             }
         }
-//        for(int i=0; i<validMoves.size(); i++){
-//            temp = Arrays.copyOf(position, position.length);
-//            temp[square] = null;
-//            temp[validMoves.get(i)] = this;
-//            //if(((King)temp[isWhite? King.wKSquare:King.bKSquare]).inCheck)// not here
-//            if(Board.isSquareInCheck(isWhite? King.wKSquare:King.bKSquare, temp)){
-//                validMoves.remove(i);
-//            }
-//        }
+    }
+    @Override
+    public String toString() {
+        return "Q";
     }
 }
