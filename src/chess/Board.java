@@ -51,7 +51,7 @@ public class Board extends JPanel implements MouseListener{
             else
                 setSquare(i, square[i-1].getBackground()==firstColor? secondColor : firstColor);
         }
-        setFEN("7k/6rr/8/8/8/8/8/B3KQ1R w - - 0 1");
+        setFEN("7k/4pppr/8/8/8/8/8/B3KQ1R w - - 0 1");
         setPiecesMouseListener();
         
     }
@@ -298,9 +298,9 @@ public class Board extends JPanel implements MouseListener{
 
     private String squareToString(int square){
         return "" + (char)(square%8+97) + (char)(8-square/8+48);
-        }
+    }
 
-        private String moveToString(Piece selectedPiece, int sqr1, int square) {
+    private String moveToString(Piece selectedPiece, int sqr1, int square) {
         String move = "";
         if(selectedPiece instanceof King && Math.abs(sqr1-square)==2){
             if(square==sqr1+2){
@@ -312,17 +312,18 @@ public class Board extends JPanel implements MouseListener{
         }
         else{
             move = selectedPiece.toString();
+            if(selectedPiece instanceof Pawn && sqr1%8 != square%8){
+            move += (char)(sqr1%8+97);
+            }
             if(pieces[square]!=null){
             move += "x";
             }
-            else if(selectedPiece instanceof Pawn && sqr1%8 != square%8){
-            move += (char)(sqr1%8+97);
-            }
+            
             move += squareToString(square);
         }
-        System.out.println(move);
         return move;
-    } 
+    }
+
     private void movePiece(Piece selectedPiece,int sqr1, int square) {
         moves.add(moveToString(selectedPiece, sqr1, square));
         if(selectedPiece instanceof Pawn){
@@ -389,7 +390,7 @@ public class Board extends JPanel implements MouseListener{
         if(isWhiteTurn){
             isWhiteTurn = false;
             
-            if(isSquareInCheck(King.bKSquare, pieces) && !((King)pieces[King.bKSquare]).inCheck){
+            if(isSquareInCheck(King.bKSquare, pieces) ){
                 ((King)pieces[King.bKSquare]).inCheck = true;
                 isCheckmate(King.bKSquare, pieces);
                 if(isCheckmate(King.bKSquare, pieces))
@@ -404,9 +405,13 @@ public class Board extends JPanel implements MouseListener{
         else{
             isWhiteTurn = true;
             
-            if(isSquareInCheck(King.wKSquare, pieces) && !((King)pieces[King.wKSquare]).inCheck){
+            if(isSquareInCheck(King.wKSquare, pieces) ){
                 ((King)pieces[King.wKSquare]).inCheck = true;
                 isCheckmate(King.wKSquare, pieces);
+                if(isCheckmate(King.wKSquare, pieces))
+                    moves.set(moves.size()-1, moves.get(moves.size()-1)+"#");
+                else
+                    moves.set(moves.size()-1, moves.get(moves.size()-1)+"+");
             }
             else if(((King)pieces[King.wKSquare]).inCheck && !isSquareInCheck(King.wKSquare, pieces))
                 ((King)pieces[King.wKSquare]).inCheck = false;
@@ -415,7 +420,7 @@ public class Board extends JPanel implements MouseListener{
         
         checkCastling(pieces);
         System.out.println("moved");
-        System.out.println(moves.get(moves.size()-1));
+        for(int i=0; i<moves.size(); i++) System.out.print((i%2==0? i/2+1 + ".":"")  + moves.get(i) + " ");
         hideHints();
     }
     
