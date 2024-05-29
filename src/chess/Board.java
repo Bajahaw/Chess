@@ -51,7 +51,8 @@ public class Board extends JPanel implements MouseListener{
             else
                 setSquare(i, square[i-1].getBackground()==firstColor? secondColor : firstColor);
         }
-        setFEN("7k/4pppr/8/8/8/8/8/BKQQQQ1R w - - 0 1");
+        String startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        setFEN(startPosition);
         setPiecesMouseListener();
         
     }
@@ -361,6 +362,7 @@ public class Board extends JPanel implements MouseListener{
         if(selectedPiece instanceof Pawn){
             if(((sqr1>7 && sqr1<16)&&(((Pawn) selectedPiece).isWhite))||((sqr1>47 && sqr1<56)&&!(((Pawn) selectedPiece).isWhite))){
                 promotePawn((Pawn)selectedPiece, sqr1, square);
+                moves.remove(moves.size()-1);
                 movePiece(pieces[sqr1], sqr1, square);
                 return;
             }
@@ -372,6 +374,7 @@ public class Board extends JPanel implements MouseListener{
                         ((Pawn)pieces[Pawn.enPassant]).isEnPassan = false;
                     Pawn.enPassant = square;
                 }
+                moves.remove(moves.size()-1);
                 movePiece(selectedPiece, sqr1, square);
                 return;
             }
