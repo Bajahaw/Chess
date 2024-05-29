@@ -85,7 +85,7 @@ public class King extends Piece{
                 }
             }
             for(Integer move : validMoves){
-                System.out.println("King moves: "+move + " Not moved: " + notMoved );
+                //System.out.println("King moves: "+move + " Not moved: " + notMoved );
                 if(sqr2==move)
                     return true;
             }

@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -51,7 +52,7 @@ public class Board extends JPanel implements MouseListener{
             else
                 setSquare(i, square[i-1].getBackground()==firstColor? secondColor : firstColor);
         }
-        setFEN("7k/4pppr/8/8/8/8/8/B3KQ1R w - - 0 1");
+        setFEN("7k/4pppr/8/8/8/8/8/BKQQQQ1R w - - 0 1");
         setPiecesMouseListener();
         
     }
@@ -312,6 +313,7 @@ public class Board extends JPanel implements MouseListener{
         }
         else{
             move = selectedPiece.toString();
+            move += isMoreThanOnePiece(selectedPiece, sqr1, square);
             if(selectedPiece instanceof Pawn && sqr1%8 != square%8){
             move += (char)(sqr1%8+97);
             }
@@ -324,6 +326,37 @@ public class Board extends JPanel implements MouseListener{
         return move;
     }
 
+    private String isMoreThanOnePiece(Piece movingPiece, int sqr1, int square2) {
+        String move = "";
+        ArrayList<Integer> squares = new ArrayList<>();
+        for(Piece piece : pieces){
+            if(piece != null && piece.isWhite == movingPiece.isWhite &&
+               piece.toString()==movingPiece.toString() && piece != movingPiece){
+
+                piece.isValidMove(piece.square, piece.square, pieces);
+                for(int move2 : piece.validMoves){
+                    if(move2 == square2){
+                        //System.out.println("found one hereeeeeeeeeeeeeeeeeeeeeeeee!!! :" + piece.square);
+                        squares.add(piece.square);
+                    }
+                }
+            }
+        }
+        if(squares.size() > 0){
+            for(int sqr : squares){
+                if(sqr%8 != sqr1%8){
+                    move += (char)(sqr1%8+97);
+                    break;
+                }
+                else{
+                    move += (char)(8-sqr1/8+48);
+                    break;
+                }
+            }
+        }
+        return move;
+    }
+ 
     private void movePiece(Piece selectedPiece,int sqr1, int square) {
         moves.add(moveToString(selectedPiece, sqr1, square));
         if(selectedPiece instanceof Pawn){
