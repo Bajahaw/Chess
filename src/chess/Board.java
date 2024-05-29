@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -67,7 +66,7 @@ public class Board extends JPanel implements MouseListener{
     private void setSquare(int index, Color color) {
         square[index] = new JLabel();
         square[index].setBackground(color);
-        square[index].setFont(new Font("Castellar",Font.BOLD,70));
+        square[index].setFont(new Font("Castellar",Font.BOLD,120));
         square[index].setForeground(new Color(185,185,185));//new Color(205,176,141)
         square[index].setHorizontalAlignment(JLabel.CENTER);
         square[index].setOpaque(true);
@@ -164,7 +163,7 @@ public class Board extends JPanel implements MouseListener{
         pieces[sqr].isValidMove(sqr, sqr, pieces);
         for(int i=0; i<pieces[sqr].validMoves.size(); i++){
             if(!isWhiteTurn^pieces[sqr].isWhite){
-                square[pieces[sqr].validMoves.get(i)].setText("O");
+                square[pieces[sqr].validMoves.get(i)].setText("•");
             }
         }
         containor.repaint();
