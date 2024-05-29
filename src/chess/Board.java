@@ -197,13 +197,54 @@ public class Board extends JPanel implements MouseListener{
 
     private void promotePawn(Pawn pawn,int sqr1, int square){
         containor.remove(pawn);
-        pieces[sqr1] = new Queen(square, pawn.isWhite);
+        pieces[sqr1] = newPiece(square, pawn.isWhite);
         pieces[sqr1].addMouseListener(this);
         containor.add(pieces[sqr1]);
         containor.setComponentZOrder(pieces[sqr1], 0);
         containor.repaint();
     }
     
+    private Piece newPiece(int square2, boolean isWhite) {
+        Piece piece;
+        Piece[] promotioPieces = new Piece[4];
+        JPanel promotionPanel = new JPanel();
+        promotionPanel.setBounds(square2*75,0,300,300);
+        promotionPanel.setLayout(new GridLayout(4,1));
+        promotionPanel.setBackground(new Color(0,0,0));
+        promotionPanel.setOpaque(true);
+        for(int i=0; i<4; i++){
+            promotioPieces[i] = new Queen(square2, isWhite);
+            if(i==1)
+            promotioPieces[i] = new Rook(square2, isWhite);
+            if(i==2)
+            promotioPieces[i] = new Bishop(square2, isWhite);
+            if(i==3)
+            promotioPieces[i] = new Knight(square2, isWhite);
+            promotionPanel.add(promotioPieces[i]);
+            promotioPieces[i].addMouseListener(new MouseListener(){
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    final Piece piece = (Piece)e.getSource();
+                    promotioPieces[0] = piece; 
+                }
+                @Override
+                public void mousePressed(MouseEvent e) {}
+
+                @Override
+                public void mouseReleased(MouseEvent e) {}
+
+                @Override
+                public void mouseEntered(MouseEvent e) {}
+
+                @Override
+                public void mouseExited(MouseEvent e) {}
+            });
+        }
+        containor.add(promotionPanel);
+        piece = promotioPieces[0];
+        return piece;
+    }
+
     private void checkCastling(Piece[] position){
         wQueenSideCastle = false;
         wKingSideCastle = false;
