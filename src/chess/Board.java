@@ -4,10 +4,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Timer;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -51,7 +55,7 @@ public class Board extends JPanel implements MouseListener{
             else
                 setSquare(i, square[i-1].getBackground()==firstColor? secondColor : firstColor);
         }
-        String startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        String startPosition = "rnbqkbnr/ppppppPp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         setFEN(startPosition);
         setPiecesMouseListener();
         
@@ -205,46 +209,70 @@ public class Board extends JPanel implements MouseListener{
     }
     
     private Piece newPiece(int square2, boolean isWhite) {
+        Object lock = new Object();
         Piece piece;
-        Piece[] promotioPieces = new Piece[4];
+        Piece[] promotioPieces = new Piece[5];
         JPanel promotionPanel = new JPanel();
         promotionPanel.setBounds(square2*75,0,300,300);
         promotionPanel.setLayout(new GridLayout(4,1));
-        promotionPanel.setBackground(new Color(0,0,0));
+        promotionPanel.setBackground(new Color(255,255,255));
+        promotionPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
         promotionPanel.setOpaque(true);
+        containor.add(promotionPanel);
+        containor.setComponentZOrder(promotionPanel, 1);
+        containor.repaint();
         for(int i=0; i<4; i++){
-            promotioPieces[i] = new Queen(square2, isWhite);
-            if(i==1)
             promotioPieces[i] = new Rook(square2, isWhite);
+            if(i==1)
+                promotioPieces[i] = new Queen(square2, isWhite);
             if(i==2)
-            promotioPieces[i] = new Bishop(square2, isWhite);
+                promotioPieces[i] = new Bishop(square2, isWhite);
             if(i==3)
-            promotioPieces[i] = new Knight(square2, isWhite);
+                promotioPieces[i] = new Knight(square2, isWhite);
             promotionPanel.add(promotioPieces[i]);
-            promotioPieces[i].addMouseListener(new MouseListener(){
+            promotionPanel.setComponentZOrder(promotioPieces[i], 0);
+            promotioPieces[i].addMouseListener(new MouseListener() {
+
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    final Piece piece = (Piece)e.getSource();
-                    promotioPieces[0] = piece; 
+                    promotioPieces[4] = (Piece)e.getSource();
+                    synchronized(lock){
+                        lock.notify();
+                    }
+                    containor.remove(promotionPanel);
+                    containor.repaint();
                 }
-                @Override
-                public void mousePressed(MouseEvent e) {}
 
                 @Override
-                public void mouseReleased(MouseEvent e) {}
+                public void mousePressed(MouseEvent e) {
+}
 
                 @Override
-                public void mouseEntered(MouseEvent e) {}
+                public void mouseReleased(MouseEvent e) {
+                }
 
                 @Override
-                public void mouseExited(MouseEvent e) {}
+                public void mouseEntered(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                }
+                
             });
+            
         }
-        containor.add(promotionPanel);
-        piece = promotioPieces[0];
+        synchronized(lock){
+            try {
+                lock.wait();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        piece = promotioPieces[4];
         return piece;
     }
-
+    
     private void checkCastling(Piece[] position){
         wQueenSideCastle = false;
         wKingSideCastle = false;
