@@ -18,6 +18,8 @@ public abstract class Piece extends JLabel implements MouseListener,MouseMotionL
     boolean isWhite;
     Piece[] temp = new Piece[64];
     public static int NumberOfPieces;
+    public MouseListener pieceListener = this;
+    public MouseMotionListener pieceMotionListener = this;
     ArrayList<Integer> validMoves = new ArrayList<>();
     Image img;
     Piece(int square){

@@ -4,11 +4,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Timer;
 
 import javax.swing.BorderFactory;
@@ -55,7 +53,7 @@ public class Board extends JPanel implements MouseListener{
             else
                 setSquare(i, square[i-1].getBackground()==firstColor? secondColor : firstColor);
         }
-        String startPosition = "rnbqkbnr/ppppppPp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        String startPosition = "rnbqkbnr/pppppp1p/8/8/8/8/PPPPPPpP/RNBQKBNR w KQkq - 0 1";
         setFEN(startPosition);
         setPiecesMouseListener();
         
@@ -198,81 +196,6 @@ public class Board extends JPanel implements MouseListener{
         //System.out.println("no check!!");
         return false;
     }
-
-    private void promotePawn(Pawn pawn,int sqr1, int square){
-        containor.remove(pawn);
-        pieces[sqr1] = newPiece(square, pawn.isWhite);
-        pieces[sqr1].addMouseListener(this);
-        containor.add(pieces[sqr1]);
-        containor.setComponentZOrder(pieces[sqr1], 0);
-        containor.repaint();
-    }
-    
-    private Piece newPiece(int square2, boolean isWhite) {
-        Object lock = new Object();
-        Piece piece;
-        Piece[] promotioPieces = new Piece[5];
-        JPanel promotionPanel = new JPanel();
-        promotionPanel.setBounds(square2*75,0,300,300);
-        promotionPanel.setLayout(new GridLayout(4,1));
-        promotionPanel.setBackground(new Color(255,255,255));
-        promotionPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-        promotionPanel.setOpaque(true);
-        containor.add(promotionPanel);
-        containor.setComponentZOrder(promotionPanel, 1);
-        containor.repaint();
-        for(int i=0; i<4; i++){
-            promotioPieces[i] = new Rook(square2, isWhite);
-            if(i==1)
-                promotioPieces[i] = new Queen(square2, isWhite);
-            if(i==2)
-                promotioPieces[i] = new Bishop(square2, isWhite);
-            if(i==3)
-                promotioPieces[i] = new Knight(square2, isWhite);
-            promotionPanel.add(promotioPieces[i]);
-            promotionPanel.setComponentZOrder(promotioPieces[i], 0);
-            promotioPieces[i].addMouseListener(new MouseListener() {
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    promotioPieces[4] = (Piece)e.getSource();
-                    synchronized(lock){
-                        lock.notify();
-                    }
-                    containor.remove(promotionPanel);
-                    containor.repaint();
-                }
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-}
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                }
-                
-            });
-            
-        }
-        synchronized(lock){
-            try {
-                lock.wait();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }
-        piece = promotioPieces[4];
-        return piece;
-    }
-    
     private void checkCastling(Piece[] position){
         wQueenSideCastle = false;
         wKingSideCastle = false;
@@ -281,42 +204,42 @@ public class Board extends JPanel implements MouseListener{
         if(isWhiteTurn){
             if(((King)position[King.wKSquare]).notMoved && !((King)position[King.wKSquare]).inCheck){
                 if( position[56] instanceof Rook &&
-                    ((Rook)position[56]).notMoved &&
-                    position[57] == null && 
-                    position[58] == null &&
-                    position[59] == null &&
-                    !isSquareInCheck(58 , position) &&
-                    !isSquareInCheck(59 , position) ){
+                        ((Rook)position[56]).notMoved &&
+                        position[57] == null &&
+                        position[58] == null &&
+                        position[59] == null &&
+                        !isSquareInCheck(58 , position) &&
+                        !isSquareInCheck(59 , position) ){
                     wQueenSideCastle = true;
                 }
                 else wQueenSideCastle = false;
                 if(position[63] instanceof Rook &&
-                    ((Rook)position[63]).notMoved &&
-                    position[61]==null&&position[62]==null &&
-                    !isSquareInCheck(62 , position) &&
-                    !isSquareInCheck(61 , position) ){
+                        ((Rook)position[63]).notMoved &&
+                        position[61]==null&&position[62]==null &&
+                        !isSquareInCheck(62 , position) &&
+                        !isSquareInCheck(61 , position) ){
                     wKingSideCastle = true;
                 }
                 else wKingSideCastle = false;
             }
-        } 
+        }
         else{
             if(((King)position[King.bKSquare]).notMoved && !((King)position[King.bKSquare]).inCheck){
                 if( position[0] instanceof Rook &&
-                    ((Rook)position[0]).notMoved &&
-                    position[1] == null && 
-                    position[2] == null &&
-                    position[3] == null &&
-                    !isSquareInCheck(2 , position) &&
-                    !isSquareInCheck(3 , position) ){
+                        ((Rook)position[0]).notMoved &&
+                        position[1] == null &&
+                        position[2] == null &&
+                        position[3] == null &&
+                        !isSquareInCheck(2 , position) &&
+                        !isSquareInCheck(3 , position) ){
                     bQueenSideCastle = true;
                 }
                 else bQueenSideCastle = false;
                 if(position[7] instanceof Rook &&
-                    ((Rook)position[7]).notMoved &&
-                    position[6]==null&&position[5]==null &&
-                    !isSquareInCheck(6 , position) &&
-                    !isSquareInCheck(5 , position) ){
+                        ((Rook)position[7]).notMoved &&
+                        position[6]==null&&position[5]==null &&
+                        !isSquareInCheck(6 , position) &&
+                        !isSquareInCheck(5 , position) ){
                     bKingSideCastle = true;
                 }
                 else bKingSideCastle = false;
@@ -346,7 +269,7 @@ public class Board extends JPanel implements MouseListener{
         System.out.println("Checkmate: " + checkmate);
         return checkmate;
     }
-    
+
     public void isDraw(int kSquare, Piece[] position) {
         boolean draw = true;
         if(((King)position[kSquare]).inCheck){
@@ -374,22 +297,22 @@ public class Board extends JPanel implements MouseListener{
         String move = "";
         if(selectedPiece instanceof King && Math.abs(sqr1-square)==2){
             if(square==sqr1+2){
-            move = "O-O";
+                move = "O-O";
             }
             if(square==sqr1-2){
-            move = "O-O-O";
+                move = "O-O-O";
             }
         }
         else{
             move = selectedPiece.toString();
             move += isMoreThanOnePiece(selectedPiece, sqr1, square);
             if(selectedPiece instanceof Pawn && sqr1%8 != square%8){
-            move += (char)(sqr1%8+97);
+                move += (char)(sqr1%8+97);
             }
             if(pieces[square]!=null){
-            move += "x";
+                move += "x";
             }
-            
+
             move += squareToString(square);
         }
         return move;
@@ -400,7 +323,7 @@ public class Board extends JPanel implements MouseListener{
         ArrayList<Integer> squares = new ArrayList<>();
         for(Piece piece : pieces){
             if(piece != null && piece.isWhite == movingPiece.isWhite &&
-               piece.toString()==movingPiece.toString() && piece != movingPiece){
+                    piece.toString()==movingPiece.toString() && piece != movingPiece){
 
                 piece.isValidMove(piece.square, piece.square, pieces);
                 for(int move2 : piece.validMoves){
@@ -425,14 +348,102 @@ public class Board extends JPanel implements MouseListener{
         }
         return move;
     }
- 
+
+    private void promotePawn(Pawn pawn,int sqr1, int square){
+        containor.remove(pawn);
+        freezeGame();
+        newPiece(sqr1, square, pawn.isWhite);
+    }
+
+    private void freezeGame() {
+        for(int i=0; i<64; i++){
+            if(pieces[i]!=null){
+                System.out.println(pieces[i].getMouseListeners().length);
+                pieces[i].removeMouseMotionListener(pieces[i].getMouseMotionListeners()[0]);
+                pieces[i].removeMouseListener(pieces[i].getMouseListeners()[1]);
+                pieces[i].removeMouseListener(pieces[i].getMouseListeners()[0]);
+            }
+        }
+    }
+
+    private void unFreezeGame() {
+        for(int i=0; i<64; i++){
+            if(pieces[i]!=null){
+                pieces[i].addMouseListener(pieces[i].pieceListener);
+                pieces[i].addMouseMotionListener(pieces[i].pieceMotionListener);
+                pieces[i].addMouseListener(Board.this);
+            }
+        }
+    }
+
+    private void newPiece(int square1 ,int square2, boolean isWhite) {
+        //freezing the game
+
+        Piece[] promotionPieces = new Piece[4];
+        JPanel promotionPanel = new JPanel();
+        promotionPanel.setBounds(square2%8*75,isWhite? 0:300,75,300);
+        promotionPanel.setLayout(new GridLayout(4,1));
+        promotionPanel.setBackground(new Color(255,255,255));
+        promotionPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+        promotionPanel.setOpaque(true);
+        containor.validate();
+        containor.add(promotionPanel);
+
+        for(int i=0; i<4; i++){
+            promotionPieces[i] = new Rook(square2, isWhite);
+            if(i==1)
+                promotionPieces[i] = new Queen(square2, isWhite);
+            if(i==2)
+                promotionPieces[i] = new Bishop(square2, isWhite);
+            if(i==3)
+                promotionPieces[i] = new Knight(square2, isWhite);
+            promotionPanel.add(promotionPieces[i]);
+            promotionPanel.setComponentZOrder(promotionPieces[i], 0);
+            promotionPieces[i].addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {}
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    unFreezeGame();
+                    if ((e.getSource()) instanceof Rook) {
+                        pieces[square1] = new Rook(square1, isWhite);
+                    } else if ((e.getSource()) instanceof Queen) {
+                        pieces[square1] = new Queen(square1, isWhite);
+                    } else if ((e.getSource()) instanceof Bishop) {
+                        pieces[square1] = new Bishop(square1, isWhite);
+                    } else if ((e.getSource()) instanceof Knight) {
+                        pieces[square1] = new Knight(square1, isWhite);
+                    }
+                    containor.remove(promotionPanel);
+                    pieces[square1].setSquare(square1);
+                    containor.add(pieces[square1]);
+                    containor.setComponentZOrder(pieces[square1], 0);
+                    pieces[square1].addMouseListener(Board.this);
+                    moves.set(moves.size()-1 , moves.get(moves.size()-1) + "="+pieces[square1].toString());
+                    movePiece(pieces[square1], square1, square2);
+                    moves.remove(moves.size()-1);
+                    containor.validate();
+                    containor.repaint();
+                }
+                @Override
+                public void mouseReleased(MouseEvent e) {}
+                @Override
+                public void mouseEntered(MouseEvent e) {}
+                @Override
+                public void mouseExited(MouseEvent e) {}
+                
+            });
+        }
+        containor.setComponentZOrder(promotionPanel, 0);
+        containor.validate();
+        containor.repaint();
+    }
+
     private void movePiece(Piece selectedPiece,int sqr1, int square) {
         moves.add(moveToString(selectedPiece, sqr1, square));
         if(selectedPiece instanceof Pawn){
             if(((sqr1>7 && sqr1<16)&&(((Pawn) selectedPiece).isWhite))||((sqr1>47 && sqr1<56)&&!(((Pawn) selectedPiece).isWhite))){
                 promotePawn((Pawn)selectedPiece, sqr1, square);
-                moves.remove(moves.size()-1);
-                movePiece(pieces[sqr1], sqr1, square);
                 return;
             }
             else if(((Pawn)selectedPiece).firstMove){
@@ -524,10 +535,14 @@ public class Board extends JPanel implements MouseListener{
         
         checkCastling(pieces);
         System.out.println("moved");
-        for(int i=0; i<moves.size(); i++) System.out.print((i%2==0? i/2+1 + ".":"")  + moves.get(i) + " ");
+        getPGN();
         hideHints();
     }
-    
+
+    public void getPGN(){
+        for(int i=0; i<moves.size(); i++)
+            System.out.print((i%2==0? i/2+1 + ".":"")  + moves.get(i) + " ");
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {

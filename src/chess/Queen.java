@@ -2,7 +2,6 @@ package chess;
 import javax.swing.ImageIcon;
 
 public class Queen extends Piece{
-    
     public Queen(int square, boolean whiteColor) {
         super(square);
         isWhite = whiteColor;
