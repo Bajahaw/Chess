@@ -6,9 +6,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Timer;
-
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -389,14 +386,15 @@ public class Board extends JPanel implements MouseListener{
         containor.validate();
         containor.add(promotionPanel);
 
-        for(int i=0; i<4; i++){
-            promotionPieces[i] = new Rook(square2, isWhite);
-            if(i==1)
-                promotionPieces[i] = new Queen(square2, isWhite);
-            if(i==2)
-                promotionPieces[i] = new Bishop(square2, isWhite);
-            if(i==3)
+        for(int i = isWhite?0:3; isWhite?i<4:i>=0;) {
+            if(i==0)
                 promotionPieces[i] = new Knight(square2, isWhite);
+            if(i==1)
+                promotionPieces[i] = new Bishop(square2, isWhite);
+            if(i==2)
+                promotionPieces[i] = new Rook(square2, isWhite);
+            if(i==3)
+                promotionPieces[i] = new Queen(square2, isWhite);
             promotionPanel.add(promotionPieces[i]);
             promotionPanel.setComponentZOrder(promotionPieces[i], 0);
             promotionPieces[i].addMouseListener(new MouseListener() {
@@ -433,6 +431,11 @@ public class Board extends JPanel implements MouseListener{
                 public void mouseExited(MouseEvent e) {}
                 
             });
+            if (isWhite) {
+                i++;
+            } else {
+                i--;
+            }
         }
         containor.setComponentZOrder(promotionPanel, 0);
         containor.validate();
