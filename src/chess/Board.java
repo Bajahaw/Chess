@@ -50,7 +50,7 @@ public class Board extends JPanel implements MouseListener{
             else
                 setSquare(i, square[i-1].getBackground()==firstColor? secondColor : firstColor);
         }
-        String startPosition = "rnbqkbnr/pppppp1p/8/8/8/8/PPPPPPpP/RNBQKBNR w KQkq - 0 1";
+        String startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         setFEN(startPosition);
         setPiecesMouseListener();
         
