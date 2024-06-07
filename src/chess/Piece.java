@@ -79,14 +79,15 @@ public abstract class Piece extends JLabel implements MouseListener,MouseMotionL
     public void mouseDragged(MouseEvent e) {
         //this.setLocation(x-35+e.getX(),y-35+e.getY());
         //checking the edge of the board
-        if(x+e.getX() > 0 && x+e.getX() < 600) {
-            this.setLocation(x-35+e.getX(),y);
+        if(x+e.getX() > 0 && x+e.getX() < 600)
             x = x - 35 + e.getX();
-        }
-        if(y+e.getY() > 0 && y+e.getY() < 600) {
-            this.setLocation(x,y-35+e.getY());
+        else if(x + e.getX() <= 0) x = -35;
+        else x = 565;
+        if(y+e.getY() > 0 && y+e.getY() < 600)
             y = y - 35 + e.getY();
-        }
+        else if(y + e.getY() <= 0) y = -35;
+        else y = 565;
+        this.setLocation(x, y);
     }
     @Override
     public void mousePressed(MouseEvent e) {
