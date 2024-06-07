@@ -9,9 +9,9 @@ public class Pawn extends Piece{
         super(square);
         isWhite = whiteColor;
         if(isWhite)
-            img = new ImageIcon("wp.png").getImage();
+            img = new ImageIcon("pngs/wp.png").getImage();
         else
-            img = new ImageIcon("bp.png").getImage();
+            img = new ImageIcon("pngs/bp.png").getImage();
     }
     
     @Override

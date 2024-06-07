@@ -13,9 +13,9 @@ public class King extends Piece{
         super(square);
         isWhite = whiteColor;
         if(isWhite)
-            img = new ImageIcon("wk.png").getImage();
+            img = new ImageIcon("pngs/wk.png").getImage();
         else
-            img = new ImageIcon("bk.png").getImage();
+            img = new ImageIcon("pngs/bk.png").getImage();
     }
     
     void isFirstMove(int square){

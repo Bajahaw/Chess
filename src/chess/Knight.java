@@ -7,9 +7,9 @@ public class Knight extends Piece{
         super(square);
         isWhite = whiteColor;
         if(isWhite)
-            img = new ImageIcon("wn.png").getImage();
+            img = new ImageIcon("pngs/wn.png").getImage();
         else
-            img = new ImageIcon("bn.png").getImage();
+            img = new ImageIcon("pngs/bn.png").getImage();
     }
 
     @Override

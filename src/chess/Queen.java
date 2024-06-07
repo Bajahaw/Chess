@@ -6,9 +6,9 @@ public class Queen extends Piece{
         super(square);
         isWhite = whiteColor;
         if(isWhite)
-            img = new ImageIcon("wq.png").getImage();
+            img = new ImageIcon("pngs/wq.png").getImage();
         else
-            img = new ImageIcon("bq.png").getImage();
+            img = new ImageIcon("pngs/bq.png").getImage();
     }
     //Not to go out of the board
     boolean checkCondition(int x, int i){

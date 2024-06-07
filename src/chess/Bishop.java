@@ -7,9 +7,9 @@ public class Bishop extends Piece{
         super(square);
         isWhite = whiteColor;
         if(isWhite)
-            img = new ImageIcon("wb.png").getImage();
+            img = new ImageIcon("pngs/wb.png").getImage();
         else
-            img = new ImageIcon("bb.png").getImage();
+            img = new ImageIcon("pngs/bb.png").getImage(); //directory change to pngs/bb.png
     }
 
     @Override

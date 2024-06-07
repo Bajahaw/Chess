@@ -7,9 +7,9 @@ public class Rook extends Piece{
         super(square);
         isWhite = whiteColor;
         if(isWhite)
-            img = new ImageIcon("wr.png").getImage();
+            img = new ImageIcon("pngs/wr.png").getImage();
         else
-            img = new ImageIcon("br.png").getImage();
+            img = new ImageIcon("pngs/br.png").getImage();
     }
     
     void isFirstMove(int square){
