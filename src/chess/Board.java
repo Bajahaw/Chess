@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Objects;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -75,77 +76,104 @@ public class Board extends JPanel implements MouseListener{
     }
 
     private void setFEN(String FEN) {
+        //not full support of all rules of fen yet
         int localBKSquare = 0;
         int localWKSquare = 0;
-        int line = 0;
-        int i = 0;
-        int squarePointer = 0;
-        while(line<=7){
-            
-            if(FEN.charAt(i)<57&&FEN.charAt(i)>47)
-                squarePointer+=Integer.parseInt(String.valueOf(FEN.charAt(i)))-1;
-            
-            if(FEN.charAt(i)=='P'){
-                pieces[squarePointer] = new Pawn(squarePointer, true);
-                containor.add(pieces[squarePointer]);
+        String splitFEN[] = FEN.split("\\s");
+        for(int part=0; part<splitFEN.length; part++){
+            int i = 0;
+            if(part==0){
+                int line = 0;
+                int squarePointer = 0;
+                while(line<=7){
+
+                    if(splitFEN[part].charAt(i)<57&&splitFEN[part].charAt(i)>47)
+                        squarePointer+=Integer.parseInt(String.valueOf(splitFEN[part].charAt(i)))-1;
+
+                    if(splitFEN[part].charAt(i)=='P'){
+                        pieces[squarePointer] = new Pawn(squarePointer, true);
+                        containor.add(pieces[squarePointer]);
+                    }
+                    if(splitFEN[part].charAt(i)=='p'){
+                        pieces[squarePointer] = new Pawn(squarePointer, false);
+                        containor.add(pieces[squarePointer]);
+                    }
+                    if(splitFEN[part].charAt(i)=='q'){
+                        pieces[squarePointer] = new Queen(squarePointer, false);
+                        containor.add(pieces[squarePointer]);
+                    }
+                    if(splitFEN[part].charAt(i)=='Q'){
+                        pieces[squarePointer] = new Queen(squarePointer, true);
+                        containor.add(pieces[squarePointer]);
+                    }
+                    if(splitFEN[part].charAt(i)=='r'){
+                        pieces[squarePointer] = new Rook(squarePointer, false);
+                        containor.add(pieces[squarePointer]);
+                    }
+                    if(splitFEN[part].charAt(i)=='R'){
+                        pieces[squarePointer] = new Rook(squarePointer, true);
+                        containor.add(pieces[squarePointer]);
+                    }
+                    if(splitFEN[part].charAt(i)=='k'){
+                        pieces[squarePointer] = new King(squarePointer, false);
+                        containor.add(pieces[squarePointer]);
+                        localBKSquare = squarePointer;
+                    }
+                    if(splitFEN[part].charAt(i)=='K'){
+                        pieces[squarePointer] = new King(squarePointer, true);
+                        containor.add(pieces[squarePointer]);
+                        localWKSquare = squarePointer;
+                    }
+                    if(splitFEN[part].charAt(i)=='n'){
+                        pieces[squarePointer] = new Knight(squarePointer, false);
+                        containor.add(pieces[squarePointer]);
+                    }
+                    if(splitFEN[part].charAt(i)=='N'){
+                        pieces[squarePointer] = new Knight(squarePointer, true);
+                        containor.add(pieces[squarePointer]);
+                    }
+                    if(splitFEN[part].charAt(i)=='b'){
+                        pieces[squarePointer] = new Bishop(squarePointer, false);
+                        containor.add(pieces[squarePointer]);
+                    }
+                    if(splitFEN[part].charAt(i)=='B'){
+                        pieces[squarePointer] = new Bishop(squarePointer, true);
+                        containor.add(pieces[squarePointer]);
+                    }
+
+                    if(splitFEN[part].charAt(i)=='/'){
+                        line++;
+                        squarePointer--;
+                    }
+                    squarePointer++;
+                    i++;
+                    if(squarePointer>63)
+                        break;
+                }
             }
-            if(FEN.charAt(i)=='p'){
-                pieces[squarePointer] = new Pawn(squarePointer, false);
-                containor.add(pieces[squarePointer]);
+            if(part==1){
+                isWhiteTurn= Objects.equals(splitFEN[part], "w");
             }
-            if(FEN.charAt(i)=='q'){
-                pieces[squarePointer] = new Queen(squarePointer, false);
-                containor.add(pieces[squarePointer]);
+            if(part==2){
+                while(i<splitFEN[part].length()){
+                    switch(splitFEN[part].charAt(i)){
+                        case 'K': wKingSideCastle = true;
+                            break;
+                        case 'k': bKingSideCastle = true;
+                            break;
+                        case 'Q': wQueenSideCastle = true;
+                            break;
+                        case 'q': bQueenSideCastle = true;
+                            break;
+                    }
+                    i++;
+                }
             }
-            if(FEN.charAt(i)=='Q'){
-                pieces[squarePointer] = new Queen(squarePointer, true);
-                containor.add(pieces[squarePointer]);
-            }
-            if(FEN.charAt(i)=='r'){
-                pieces[squarePointer] = new Rook(squarePointer, false);
-                containor.add(pieces[squarePointer]);
-            }
-            if(FEN.charAt(i)=='R'){
-                pieces[squarePointer] = new Rook(squarePointer, true);
-                containor.add(pieces[squarePointer]);
-            }
-            if(FEN.charAt(i)=='k'){
-                pieces[squarePointer] = new King(squarePointer, false);
-                containor.add(pieces[squarePointer]);
-                localBKSquare = squarePointer;
-            }
-            if(FEN.charAt(i)=='K'){
-                pieces[squarePointer] = new King(squarePointer, true);
-                containor.add(pieces[squarePointer]);
-                localWKSquare = squarePointer;
-            }
-            if(FEN.charAt(i)=='n'){
-                pieces[squarePointer] = new Knight(squarePointer, false);
-                containor.add(pieces[squarePointer]);
-            }
-            if(FEN.charAt(i)=='N'){
-                pieces[squarePointer] = new Knight(squarePointer, true);
-                containor.add(pieces[squarePointer]);
-            }
-            if(FEN.charAt(i)=='b'){
-                pieces[squarePointer] = new Bishop(squarePointer, false);
-                containor.add(pieces[squarePointer]);
-            }
-            if(FEN.charAt(i)=='B'){
-                pieces[squarePointer] = new Bishop(squarePointer, true);
-                containor.add(pieces[squarePointer]);
-            }
-            
-            if(FEN.charAt(i)=='/'){
-                line++;
-                squarePointer--;
-            }
-            
-            squarePointer++;
-            i++;
-            if(FEN.charAt(i)==' ')
-                break;
+            if(part==3){}
+            if(part==4){}
+            if(part==5){}
         }
+
         King.bKSquare = localBKSquare;
         King.wKSquare = localWKSquare;
     }
