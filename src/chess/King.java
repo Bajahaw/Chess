@@ -62,19 +62,12 @@ public class King extends Piece{
                 }
             }
         }
-        if(isWhite){
-            if(Board.wKingSideCastle) validMoves.add(62);
-            if(Board.wQueenSideCastle) validMoves.add(58);
-        }
-        else{
-            if(Board.bKingSideCastle) validMoves.add(6);
-            if(Board.bQueenSideCastle) validMoves.add(2);
-        }
     }
     @Override
     boolean isValidMove(int sqr1,int sqr2,Piece[] position) {
         if(position[sqr1] != null){
             calculateValidMoves(sqr1, position);
+            checkCastling(position);
             for(int i=0; i<validMoves.size(); i++){
                 temp = Arrays.copyOf(position, position.length);
                 temp[sqr1] = null;
@@ -92,6 +85,66 @@ public class King extends Piece{
         }
         return false;
     }
+
+    private void checkCastling(Piece[] position){
+        if(isWhite){
+            if(notMoved && !inCheck){
+                if(  Board.wQueenSideCastle &&
+                        position[56] instanceof Rook &&
+                        ((Rook)position[56]).notMoved &&
+                        position[57] == null &&
+                        position[58] == null &&
+                        position[59] == null &&
+                        !Board.isSquareInCheck(58 , position) &&
+                        !Board.isSquareInCheck(59 , position) ){
+                    validMoves.add(58);
+                }
+                else if(!notMoved || !(position[56] instanceof Rook) || !((Rook)position[56]).notMoved){
+                    Board.wQueenSideCastle = false;
+                }
+                if(  Board.wKingSideCastle &&
+                        position[63] instanceof Rook &&
+                        ((Rook)position[63]).notMoved &&
+                        position[61]==null&&position[62]==null &&
+                        !Board.isSquareInCheck(62 , position) &&
+                        !Board.isSquareInCheck(61 , position) ){
+                    validMoves.add(62);
+                }
+                else if(!notMoved || !(position[63] instanceof Rook) || !((Rook)position[63]).notMoved){
+                    Board.wKingSideCastle = false;
+                }
+            }
+        }
+        else{
+            if(notMoved && !inCheck){
+                if( Board.bQueenSideCastle &&
+                        position[0] instanceof Rook &&
+                        ((Rook)position[0]).notMoved &&
+                        position[1] == null &&
+                        position[2] == null &&
+                        position[3] == null &&
+                        !Board.isSquareInCheck(2 , position) &&
+                        !Board.isSquareInCheck(3 , position) ){
+                    validMoves.add(2);
+                }
+                else if(!notMoved || !(position[0] instanceof Rook) || !((Rook)position[0]).notMoved){
+                    Board.bQueenSideCastle = false;
+                }
+                if( Board.bKingSideCastle &&
+                        position[7] instanceof Rook &&
+                        ((Rook)position[7]).notMoved &&
+                        position[6]==null&&position[5]==null &&
+                        !Board.isSquareInCheck(6 , position) &&
+                        !Board.isSquareInCheck(5 , position) ){
+                    validMoves.add(6);
+                }
+                else if(!notMoved || !(position[7] instanceof Rook) || !((Rook)position[7]).notMoved){
+                    Board.bKingSideCastle = false;
+                }
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return "K";

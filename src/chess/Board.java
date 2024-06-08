@@ -221,56 +221,6 @@ public class Board extends JPanel implements MouseListener{
         //System.out.println("no check!!");
         return false;
     }
-    private void checkCastling(Piece[] position){
-        wQueenSideCastle = false;
-        wKingSideCastle = false;
-        bQueenSideCastle = false;
-        bKingSideCastle = false;
-        if(isWhiteTurn){
-            if(((King)position[King.wKSquare]).notMoved && !((King)position[King.wKSquare]).inCheck){
-                if( position[56] instanceof Rook &&
-                        ((Rook)position[56]).notMoved &&
-                        position[57] == null &&
-                        position[58] == null &&
-                        position[59] == null &&
-                        !isSquareInCheck(58 , position) &&
-                        !isSquareInCheck(59 , position) ){
-                    wQueenSideCastle = true;
-                }
-                else wQueenSideCastle = false;
-                if(position[63] instanceof Rook &&
-                        ((Rook)position[63]).notMoved &&
-                        position[61]==null&&position[62]==null &&
-                        !isSquareInCheck(62 , position) &&
-                        !isSquareInCheck(61 , position) ){
-                    wKingSideCastle = true;
-                }
-                else wKingSideCastle = false;
-            }
-        }
-        else{
-            if(((King)position[King.bKSquare]).notMoved && !((King)position[King.bKSquare]).inCheck){
-                if( position[0] instanceof Rook &&
-                        ((Rook)position[0]).notMoved &&
-                        position[1] == null &&
-                        position[2] == null &&
-                        position[3] == null &&
-                        !isSquareInCheck(2 , position) &&
-                        !isSquareInCheck(3 , position) ){
-                    bQueenSideCastle = true;
-                }
-                else bQueenSideCastle = false;
-                if(position[7] instanceof Rook &&
-                        ((Rook)position[7]).notMoved &&
-                        position[6]==null&&position[5]==null &&
-                        !isSquareInCheck(6 , position) &&
-                        !isSquareInCheck(5 , position) ){
-                    bKingSideCastle = true;
-                }
-                else bKingSideCastle = false;
-            }
-        }
-    }
 
     public boolean isCheckmate(int kingSquare, Piece[] position){
         boolean checkmate = ((King)position[kingSquare]).inCheck;
@@ -402,8 +352,6 @@ public class Board extends JPanel implements MouseListener{
     }
 
     private void newPiece(int square1 ,int square2, boolean isWhite) {
-        //freezing the game
-
         Piece[] promotionPieces = new Piece[4];
         JPanel promotionPanel = new JPanel();
         promotionPanel.setBounds(square2%8*75,isWhite? 0:300,75,300);
@@ -501,7 +449,7 @@ public class Board extends JPanel implements MouseListener{
             }
         }
         
-        //System.out.println(Pawn.enPassant + " enpassant");
+        //System.out.println(Pawn.enPassant + " Enpassant");
         if( pieces[Pawn.enPassant] instanceof Pawn ){
             ((Pawn)pieces[Pawn.enPassant]).isEnPassan = false;
             Pawn.enPassant = 0;
@@ -564,7 +512,6 @@ public class Board extends JPanel implements MouseListener{
             isDraw(King.wKSquare, pieces);
         }
         
-        checkCastling(pieces);
         System.out.println("moved");
         getPGN();
         hideHints();
@@ -649,16 +596,9 @@ public class Board extends JPanel implements MouseListener{
     }
     
     @Override
-    public void mouseClicked(MouseEvent e) {
-        
-    }
+    public void mouseClicked(MouseEvent e) {}
     @Override
-    public void mouseEntered(MouseEvent e) {
-        
-    }
-
+    public void mouseEntered(MouseEvent e) {}
     @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
+    public void mouseExited(MouseEvent e) {}
 }
