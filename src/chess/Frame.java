@@ -13,7 +13,7 @@ public class Frame extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(1200 , 650);
         this.setLocation(200, 50);
-        this.setLayout(new FlowLayout());
+        this.setLayout(new FlowLayout(FlowLayout.LEFT, 100, 10));
 
         controlPanel = new ControlPanel();
         board = new Board();
