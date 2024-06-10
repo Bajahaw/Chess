@@ -246,6 +246,9 @@ public class Board extends JPanel implements MouseListener{
     }
 
     public void isDraw(int kSquare, Piece[] position) {
+        //TODO: implement draw BY repetition
+        //TODO: implement draw BY 50 moves
+        //TODO: implement draw BY insufficient material
         boolean draw = true;
         if(((King)position[kSquare]).inCheck){
             draw = false;
@@ -262,6 +265,7 @@ public class Board extends JPanel implements MouseListener{
             }
         }
         System.out.println("Draw: " + draw);
+
     }
 
     private String squareToString(int square){
@@ -303,7 +307,7 @@ public class Board extends JPanel implements MouseListener{
                 piece.isValidMove(piece.square, piece.square, pieces);
                 for(int move2 : piece.validMoves){
                     if(move2 == square2){
-                        //System.out.println("found one hereeeeeeeeeeeeeeeeeeeeeeeee!!! :" + piece.square);
+                        //System.out.println("found one hereeeee!!! :" + piece.square);
                         squares.add(piece.square);
                     }
                 }
