@@ -27,6 +27,9 @@ public class Board extends JPanel implements MouseListener{
     static boolean bQueenSideCastle = false;
     boolean firstTouch = false;
     public static boolean isWhiteTurn = true;
+    public boolean isCheckmate = false;
+    public boolean isDraw = false;
+    public boolean isGameFrozen = false;
     public static String startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public Board() {
         
@@ -178,6 +181,10 @@ public class Board extends JPanel implements MouseListener{
     }
 
     public void resetGame() {
+        isCheckmate = false;
+        isDraw = false;
+        isGameFrozen = false;
+        hideHints();
         containor.removeAll();
         for(int i=0; i<64; i++){
             pieces[i] = null;
@@ -252,6 +259,10 @@ public class Board extends JPanel implements MouseListener{
             }
         }
         System.out.println("Checkmate: " + checkmate);
+        if(checkmate) {
+            isCheckmate = true;
+            freezeGame();
+        }
         return checkmate;
     }
 
@@ -276,7 +287,10 @@ public class Board extends JPanel implements MouseListener{
             }
         }
         System.out.println("Draw: " + draw);
-
+        if(draw) {
+            isDraw = true;
+            freezeGame();
+        }
     }
 
     private String squareToString(int square){
@@ -349,9 +363,13 @@ public class Board extends JPanel implements MouseListener{
         for(int i=0; i<64; i++){
             if(pieces[i]!=null){
                 System.out.println(pieces[i].getMouseListeners().length);
-                pieces[i].removeMouseMotionListener(pieces[i].getMouseMotionListeners()[0]);
-                pieces[i].removeMouseListener(pieces[i].getMouseListeners()[1]);
-                pieces[i].removeMouseListener(pieces[i].getMouseListeners()[0]);
+                if(pieces[i].getMouseMotionListeners().length!=0)
+                    pieces[i].removeMouseMotionListener( pieces[i].getMouseMotionListeners()[0]);
+                if (pieces[i].getMouseListeners().length!=0) {
+                    pieces[i].removeMouseListener(pieces[i].getMouseListeners()[0]);
+                    if(pieces[i].getMouseListeners().length>1)
+                        pieces[i].removeMouseListener(pieces[i].getMouseListeners()[1]);
+                }
             }
         }
     }
@@ -532,9 +550,11 @@ public class Board extends JPanel implements MouseListener{
         hideHints();
     }
 
-    public void getPGN(){
+    public String getPGN(){
+        String pgn = "";
         for(int i=0; i<moves.size(); i++)
-            System.out.print((i%2==0? i/2+1 + ".":"")  + moves.get(i) + " ");
+            pgn += ((i%2==0? i/2+1 + ".":"")  + moves.get(i) + " ");
+        return pgn;
     }
 
     @Override
