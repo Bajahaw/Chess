@@ -7,7 +7,6 @@ import javax.swing.*;
 
 
 public class Frame extends JFrame {
-    Board board;
     ControlPanel controlPanel;
     Frame(){
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -16,9 +15,8 @@ public class Frame extends JFrame {
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 100, 10));
 
         controlPanel = new ControlPanel();
-        board = new Board();
 
-        this.add(board.containor);
+        this.add(controlPanel.board.containor);
         this.add(controlPanel);
         
         this.getContentPane().setBackground(new Color(50,50,50));

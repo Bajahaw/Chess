@@ -27,6 +27,7 @@ public class Board extends JPanel implements MouseListener{
     static boolean bQueenSideCastle = false;
     boolean firstTouch = false;
     public static boolean isWhiteTurn = true;
+    public static String startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public Board() {
         
         containor = new JPanel();
@@ -51,10 +52,7 @@ public class Board extends JPanel implements MouseListener{
             else
                 setSquare(i, square[i-1].getBackground()==firstColor? secondColor : firstColor);
         }
-        String startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         setFEN(startPosition);
-        setPiecesMouseListener();
-        
     }
     private void setPiecesMouseListener() {
         for(int i=0; i<64; i++){
@@ -75,11 +73,11 @@ public class Board extends JPanel implements MouseListener{
         this.add(square[index]);
     }
 
-    private void setFEN(String FEN) {
+    public void setFEN(String FEN) {
         //not full support of all rules of fen yet
         int localBKSquare = 0;
         int localWKSquare = 0;
-        String splitFEN[] = FEN.split("\\s");
+        String[] splitFEN = FEN.split("\\s");
         for(int part=0; part<splitFEN.length; part++){
             int i = 0;
             if(part==0){
@@ -92,53 +90,53 @@ public class Board extends JPanel implements MouseListener{
 
                     if(splitFEN[part].charAt(i)=='P'){
                         pieces[squarePointer] = new Pawn(squarePointer, true);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer], 0);
                     }
                     if(splitFEN[part].charAt(i)=='p'){
                         pieces[squarePointer] = new Pawn(squarePointer, false);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer], 0);
                     }
                     if(splitFEN[part].charAt(i)=='q'){
                         pieces[squarePointer] = new Queen(squarePointer, false);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                     }
                     if(splitFEN[part].charAt(i)=='Q'){
                         pieces[squarePointer] = new Queen(squarePointer, true);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                     }
                     if(splitFEN[part].charAt(i)=='r'){
                         pieces[squarePointer] = new Rook(squarePointer, false);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                     }
                     if(splitFEN[part].charAt(i)=='R'){
                         pieces[squarePointer] = new Rook(squarePointer, true);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                     }
                     if(splitFEN[part].charAt(i)=='k'){
                         pieces[squarePointer] = new King(squarePointer, false);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                         localBKSquare = squarePointer;
                     }
                     if(splitFEN[part].charAt(i)=='K'){
                         pieces[squarePointer] = new King(squarePointer, true);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                         localWKSquare = squarePointer;
                     }
                     if(splitFEN[part].charAt(i)=='n'){
                         pieces[squarePointer] = new Knight(squarePointer, false);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                     }
                     if(splitFEN[part].charAt(i)=='N'){
                         pieces[squarePointer] = new Knight(squarePointer, true);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                     }
                     if(splitFEN[part].charAt(i)=='b'){
                         pieces[squarePointer] = new Bishop(squarePointer, false);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                     }
                     if(splitFEN[part].charAt(i)=='B'){
                         pieces[squarePointer] = new Bishop(squarePointer, true);
-                        containor.add(pieces[squarePointer]);
+                        containor.add(pieces[squarePointer],0);
                     }
 
                     if(splitFEN[part].charAt(i)=='/'){
@@ -173,9 +171,21 @@ public class Board extends JPanel implements MouseListener{
             if(part==4){}
             if(part==5){}
         }
-
+        setPiecesMouseListener();
         King.bKSquare = localBKSquare;
         King.wKSquare = localWKSquare;
+        containor.repaint();
+    }
+
+    public void resetGame() {
+        containor.removeAll();
+        for(int i=0; i<64; i++){
+            pieces[i] = null;
+        }
+        moves.clear();
+        containor.add(this);
+        revalidate();
+        repaint();
     }
 
     private void hideHints() {
@@ -204,7 +214,7 @@ public class Board extends JPanel implements MouseListener{
             System.out.println("Checkmate!!");
         if(isWhiteTurn^pieces[sqr1].isWhite)
             return false;
-        return pieces[sqr1]!=null? pieces[sqr1].isValidMove(sqr1, sqr2, pieces): false;
+        return pieces[sqr1] != null && pieces[sqr1].isValidMove(sqr1, sqr2, pieces);
     }
 
     public static boolean isSquareInCheck(int square, Piece[] board){
@@ -226,14 +236,14 @@ public class Board extends JPanel implements MouseListener{
         boolean checkmate = ((King)position[kingSquare]).inCheck;
         if(((King)position[kingSquare]).inCheck){
             position[kingSquare].isValidMove(kingSquare, kingSquare, position);
-            if(position[kingSquare].validMoves.size()>0){
+            if(!position[kingSquare].validMoves.isEmpty()){
                 checkmate = false;
             }
             else{
                 for(Piece piece : position){
                     if(piece != null && piece.isWhite == isWhiteTurn){
                         piece.isValidMove(piece.square, piece.square, position);
-                        if(piece.validMoves.size()>0){
+                        if(!piece.validMoves.isEmpty()){
                             checkmate = false;
                             break;
                         }
@@ -249,6 +259,7 @@ public class Board extends JPanel implements MouseListener{
         //TODO: implement draw BY repetition
         //TODO: implement draw BY 50 moves
         //TODO: implement draw BY insufficient material
+
         boolean draw = true;
         if(((King)position[kSquare]).inCheck){
             draw = false;
@@ -257,7 +268,7 @@ public class Board extends JPanel implements MouseListener{
             for(Piece piece : position){
                 if(piece != null && piece.isWhite == isWhiteTurn){
                     piece.isValidMove(piece.square, piece.square, position);
-                    if(piece.validMoves.size()>0){
+                    if(!piece.validMoves.isEmpty()){
                         draw = false;
                         break;
                     }
@@ -313,7 +324,7 @@ public class Board extends JPanel implements MouseListener{
                 }
             }
         }
-        if(squares.size() > 0){
+        if(!squares.isEmpty()){
             for(int sqr : squares){
                 if(sqr%8 != sqr1%8){
                     move += (char)(sqr1%8+97);
