@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ControlPanel extends JPanel implements ActionListener, MouseListener {
-    Board board = new Board();
+public class ControlPanel extends JPanel implements ActionListener {
+    Board board;
     JPanel controls;
     JPanel gameState;
     JButton newGameButton;
@@ -13,8 +13,8 @@ public class ControlPanel extends JPanel implements ActionListener, MouseListene
     JTextField fenText;
     JTextArea moves;
     JLabel boardState;
-    public ControlPanel(){
-
+    public ControlPanel(Board board){
+        this.board = board;
         controls = new JPanel();
         controls.setSize(new Dimension(400, 200));
         controls.setBackground(new java.awt.Color(50,50,50));
@@ -67,7 +67,6 @@ public class ControlPanel extends JPanel implements ActionListener, MouseListene
         boardState.setFont(new Font("Arial", Font.PLAIN, 20));
         boardState.setHorizontalAlignment(SwingConstants.CENTER);
 
-        addMouseListenerToPieces();
 
         controls.add(newGameButton);
         controls.add(setFENButton);
@@ -76,10 +75,6 @@ public class ControlPanel extends JPanel implements ActionListener, MouseListene
         gameState.add(moves);
         this.add(controls);
         this.add(gameState);
-    }
-
-    private void addMouseListenerToPieces(){
-        for(Piece piece: board.pieces) if(piece!=null)piece.addMouseListener(this);
     }
 
     private boolean isFENValid(String FEN){
@@ -91,7 +86,7 @@ public class ControlPanel extends JPanel implements ActionListener, MouseListene
         return count > 6;
     }
 
-    private void updateBoardState(){
+    public void updateBoardState(){
         boardState.setText(Board.isWhiteTurn ? "White Turn": "Black Turn");
         if(board.isCheckmate){
             boardState.setText(Board.isWhiteTurn ? "Black Wins": "White Wins");
@@ -109,27 +104,13 @@ public class ControlPanel extends JPanel implements ActionListener, MouseListene
             if(isFENValid(fenText.getText())){
                 board.resetGame();
                 board.setFEN(fenText.getText());
-                addMouseListenerToPieces();
                 updateBoardState();
             }
         }
         if(e.getSource() == newGameButton){
             board.resetGame();
             board.setFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-            addMouseListenerToPieces();
             updateBoardState();
         }
     }
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        updateBoardState();
-    }
-    @Override
-    public void mouseClicked(MouseEvent e) {}
-    @Override
-    public void mousePressed(MouseEvent e) {}
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-    @Override
-    public void mouseExited(MouseEvent e) {}
 }

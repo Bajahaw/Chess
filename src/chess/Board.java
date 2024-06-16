@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 public class Board extends JPanel implements MouseListener{
 
     JPanel containor;
+    ControlPanel controlPanel;
     JLabel[] square = new JLabel[64];
     Piece[] pieces = new Piece[64];
     ArrayList<String> moves = new ArrayList<>();
@@ -36,6 +37,8 @@ public class Board extends JPanel implements MouseListener{
         containor = new JPanel();
         containor.setPreferredSize(new Dimension(600,600));
         containor.setLayout(null);
+
+        controlPanel = new ControlPanel(this);
         
         this.setBounds(0,0,600, 600);
         this.setLayout(new GridLayout(8,8));
@@ -362,13 +365,11 @@ public class Board extends JPanel implements MouseListener{
     private void freezeGame() {
         for(int i=0; i<64; i++){
             if(pieces[i]!=null){
-                System.out.println(pieces[i].getMouseListeners().length);
-                if(pieces[i].getMouseMotionListeners().length!=0)
-                    pieces[i].removeMouseMotionListener( pieces[i].getMouseMotionListeners()[0]);
-                if (pieces[i].getMouseListeners().length!=0) {
-                    pieces[i].removeMouseListener(pieces[i].getMouseListeners()[0]);
-                    if(pieces[i].getMouseListeners().length>1)
-                        pieces[i].removeMouseListener(pieces[i].getMouseListeners()[1]);
+                for(MouseListener listener : pieces[i].getMouseListeners()){
+                    pieces[i].removeMouseListener(listener);
+                }
+                for(MouseMotionListener listener : pieces[i].getMouseMotionListeners()){
+                    pieces[i].removeMouseMotionListener(listener);
                 }
             }
         }
@@ -377,6 +378,7 @@ public class Board extends JPanel implements MouseListener{
     private void unFreezeGame() {
         for(int i=0; i<64; i++){
             if(pieces[i]!=null){
+
                 pieces[i].addMouseListener(pieces[i].pieceListener);
                 pieces[i].addMouseMotionListener(pieces[i].pieceMotionListener);
                 pieces[i].addMouseListener(Board.this);
@@ -429,6 +431,7 @@ public class Board extends JPanel implements MouseListener{
                     moves.set(moves.size()-1 , moves.get(moves.size()-1) + "="+pieces[square1].toString());
                     movePiece(pieces[square1], square1, square2);
                     moves.remove(moves.size()-1);
+                    controlPanel.updateBoardState();
                     containor.validate();
                     containor.repaint();
                 }
@@ -546,7 +549,7 @@ public class Board extends JPanel implements MouseListener{
         }
         
         System.out.println("moved");
-        getPGN();
+        controlPanel.updateBoardState();
         hideHints();
     }
 
