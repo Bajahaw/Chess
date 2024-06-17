@@ -31,6 +31,9 @@ public class Board extends JPanel implements MouseListener{
     public boolean isCheckmate = false;
     public boolean isDraw = false;
     public boolean isGameFrozen = false;
+    int[] lastMove = new int[4];
+    Color firstColor = new Color(227, 236, 245);//new Color(233,215,180);//
+    Color secondColor = new Color(112, 144, 167);//new Color(177,137,103);//
     public static String startPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     public Board() {
         
@@ -49,8 +52,6 @@ public class Board extends JPanel implements MouseListener{
     }
 
     public void setBoard() {
-        Color firstColor = Color.WHITE;//new Color(233,215,180);//
-        Color secondColor = Color.GRAY;//new Color(177,137,103)//
         setSquare(0,firstColor);
         for(int i=1; i<64; i++){
             if(i%8==0)
@@ -72,7 +73,10 @@ public class Board extends JPanel implements MouseListener{
         square[index] = new JLabel();
         square[index].setBackground(color);
         square[index].setFont(new Font("Castellar",Font.BOLD,120));
-        square[index].setForeground(new Color(185,185,185));//new Color(205,176,141)
+        square[index].setForeground(new Color(
+                (firstColor.getRed()+secondColor.getRed())/2,
+                (firstColor.getGreen()+secondColor.getGreen())/2,
+                (firstColor.getBlue()+secondColor.getBlue())/2));//new Color(205,176,141)
         square[index].setHorizontalAlignment(JLabel.CENTER);
         square[index].setOpaque(true);
         square[index].addMouseListener(this);
@@ -184,6 +188,8 @@ public class Board extends JPanel implements MouseListener{
     }
 
     public void resetGame() {
+        square[lastMove[0]].setBackground(lastMove[2]==0? firstColor : secondColor);
+        square[lastMove[1]].setBackground(lastMove[3]==0? firstColor : secondColor);
         isCheckmate = false;
         isDraw = false;
         isGameFrozen = false;
@@ -547,10 +553,31 @@ public class Board extends JPanel implements MouseListener{
                 ((King)pieces[King.wKSquare]).inCheck = false;
             isDraw(King.wKSquare, pieces);
         }
-        
+
+        //just for debugging purposes
         System.out.println("moved");
+
+        highLightLastMove(sqr1, square);
         controlPanel.updateBoardState();
         hideHints();
+    }
+
+    private void highLightLastMove(int sqr1, int sqr2) {
+        square[lastMove[0]].setBackground(lastMove[2]==0? firstColor : secondColor);
+        square[lastMove[1]].setBackground(lastMove[3]==0? firstColor : secondColor);
+        lastMove[0] = sqr1;
+        lastMove[2] = square[sqr1].getBackground()==firstColor? 0:1;
+        lastMove[1] = sqr2;
+        lastMove[3] = square[sqr2].getBackground()==firstColor? 0:1;
+        System.out.println(lastMove[2] + " " + lastMove[3]);
+        square[sqr1].setBackground(new Color(
+                (firstColor.getRed()+secondColor.getRed())/2,
+                (firstColor.getGreen()+secondColor.getGreen())/2+((255-(firstColor.getBlue()+secondColor.getBlue())/2)/5),
+                ((firstColor.getBlue()+secondColor.getBlue())/2)+((255-(firstColor.getBlue()+secondColor.getBlue())/2)/5)));
+        square[sqr2].setBackground(new Color(
+                (firstColor.getRed()+secondColor.getRed())/2,
+                (firstColor.getGreen()+secondColor.getGreen())/2,
+                (firstColor.getBlue()+secondColor.getBlue())/2));
     }
 
     public String getPGN(){
