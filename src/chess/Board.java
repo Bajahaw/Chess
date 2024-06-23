@@ -19,6 +19,7 @@ public class Board extends JPanel implements MouseListener{
     JLabel[] square = new JLabel[64];
     Piece[] pieces = new Piece[64];
     ArrayList<String> moves = new ArrayList<>();
+    Engine engine = new Engine(this);
     Piece selectedPiece;
 //    int[] blackPieces = new int[16];
 //    int[] whitePieces = new int[16];
@@ -47,7 +48,7 @@ public class Board extends JPanel implements MouseListener{
         this.setLayout(new GridLayout(8,8));
         
         setBoard();
-        
+        engine.test(pieces);
         containor.add(this);
     }
 
@@ -460,7 +461,7 @@ public class Board extends JPanel implements MouseListener{
         containor.repaint();
     }
 
-    private void movePiece(Piece selectedPiece,int sqr1, int square) {
+    public void movePiece(Piece selectedPiece,int sqr1, int square) {
         moves.add(moveToString(selectedPiece, sqr1, square));
         if(selectedPiece instanceof Pawn){
             if(((sqr1>7 && sqr1<16)&&(((Pawn) selectedPiece).isWhite))||((sqr1>47 && sqr1<56)&&!(((Pawn) selectedPiece).isWhite))){
