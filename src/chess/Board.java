@@ -19,7 +19,7 @@ public class Board extends JPanel implements MouseListener{
     JLabel[] square = new JLabel[64];
     Piece[] pieces = new Piece[64];
     ArrayList<String> moves = new ArrayList<>();
-    Engine engine = new Engine(this);
+    Engine engine;
     Piece selectedPiece;
 //    int[] blackPieces = new int[16];
 //    int[] whitePieces = new int[16];
@@ -48,6 +48,7 @@ public class Board extends JPanel implements MouseListener{
         this.setLayout(new GridLayout(8,8));
         
         setBoard();
+        engine = new Engine(this);
         engine.test(pieces);
         containor.add(this);
     }
@@ -183,6 +184,10 @@ public class Board extends JPanel implements MouseListener{
             if(part==5){}
         }
         setPiecesMouseListener();
+        if(engine != null){
+            engine.currentBoard = pieces;
+            engine.updateOwnPieces();
+        }
         King.bKSquare = localBKSquare;
         King.wKSquare = localWKSquare;
         containor.repaint();
@@ -229,9 +234,11 @@ public class Board extends JPanel implements MouseListener{
         //System.out.println("WH: "+King.wKSquare);
         if(isCheckmate(isWhiteTurn? King.wKSquare:King.bKSquare, pieces))
             System.out.println("Checkmate!!");
+        if(pieces[sqr1] == null)
+            return false;
         if(isWhiteTurn^pieces[sqr1].isWhite)
             return false;
-        return pieces[sqr1] != null && pieces[sqr1].isValidMove(sqr1, sqr2, pieces);
+        return pieces[sqr1].isValidMove(sqr1, sqr2, pieces);
     }
 
     public static boolean isSquareInCheck(int square, Piece[] board){
@@ -268,7 +275,7 @@ public class Board extends JPanel implements MouseListener{
                 }
             }
         }
-        System.out.println("Checkmate: " + checkmate);
+        //System.out.println("Checkmate: " + checkmate);
         if(checkmate) {
             isCheckmate = true;
             freezeGame();
@@ -483,10 +490,12 @@ public class Board extends JPanel implements MouseListener{
             else if((square-sqr1)%8 != 0 && pieces[square]==null){
                 if(selectedPiece.isWhite){
                     containor.remove(pieces[square+8]);
+                    engine.ownPieces.remove(pieces[square+8]);
                     pieces[square+8]=null;
                 }
                 else {
                     containor.remove(pieces[square-8]);
+                    engine.ownPieces.remove(pieces[square-8]);
                     pieces[square-8]=null;
                 }
             }
@@ -514,6 +523,7 @@ public class Board extends JPanel implements MouseListener{
         
         if(pieces[square]!=null){
             containor.remove(pieces[square]);
+            engine.ownPieces.remove(pieces[square]);
             pieces[square] = selectedPiece;
             containor.repaint();
         }
@@ -521,7 +531,7 @@ public class Board extends JPanel implements MouseListener{
         else{
             pieces[square] = selectedPiece;
         }
-        
+
         pieces[sqr1]=null;
         pieces[square].setSquare(square);
         if(isWhiteTurn){
@@ -538,6 +548,7 @@ public class Board extends JPanel implements MouseListener{
             else if(((King)pieces[King.bKSquare]).inCheck && !isSquareInCheck(King.bKSquare, pieces))
                 ((King)pieces[King.bKSquare]).inCheck = false;
             isDraw(King.bKSquare, pieces);
+            engine.makeMove();
         }
         else{
             isWhiteTurn = true;
