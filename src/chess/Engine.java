@@ -2,90 +2,101 @@ package chess;
 
 import javax.swing.plaf.IconUIResource;
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 public class Engine {
+    ChessBot bot;
+    String moves = "";
     Board board;
-    Piece[] currentBoard;
-    Piece[] temp;
-    ArrayList<Piece> ownPieces;
-    boolean isPlayingWhite = false;
-    Random random;
     public Engine(Board board){
+        bot = new ChessBot();
+        if (bot.startEngine()) {
+            sendCommand("uci");
+            System.out.println(getOutput());
+//          bot.stopEngine();
+        }
         this.board = board;
-        currentBoard = board.pieces;
-        random = new Random();
-        temp = Arrays.copyOf(currentBoard, currentBoard.length);
-        ownPieces = new ArrayList<>();
-        for(int i=0; i<64; i++){
-            //System.out.println(currentBoard[i] != null && !currentBoard[i].isWhite);
-            if(currentBoard[i] != null && !currentBoard[i].isWhite){
-                ownPieces.add(currentBoard[i]);
-                System.out.println(i);
-            }
+    }
+
+    public void makeMove(){
+        String move;
+        sendCommand("position startpos moves" + moves);
+        sendCommand("go movetime 100");
+        move = getOutput().split("bestmove ")[1].split(" ")[0];
+        System.out.println(move);
+        int from = board.stringToSquare(move.substring(0,2));
+        int to = board.stringToSquare(move.substring(2,4));
+        board.movePiece(board.pieces[from], from, to);
+    }
+
+    private String getOutput() {
+        try {
+            return bot.getOutput();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
-    public void updateOwnPieces(){
-        for(int i=0; i<64; i++){
-            //System.out.println(currentBoard[i] != null && !currentBoard[i].isWhite);
-            if(currentBoard[i] != null && !currentBoard[i].isWhite){
-                ownPieces.add(currentBoard[i]);
-                System.out.println(i);
-            }
+
+    public void sendCommand(String s) {
+        System.out.println(s);
+        try {
+            bot.sendCommand(s);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
-    public ArrayList<String> getAllMoves(Piece[] position){
-        ArrayList<String> moves = new ArrayList<>();
-        //System.out.println("own"+ownPieces.size());
-        for(int i=0; i<ownPieces.size(); i++){
-            ownPieces.get(i).isValidMove(ownPieces.get(i).square,i,position);
-            for(int j=0; j<ownPieces.get(i).validMoves.size(); j++){
-                if(!Board.isWhiteTurn ^ ownPieces.get(i).isWhite) {
-                    if(!board.isValidMove(ownPieces.get(i).square, ownPieces.get(i).validMoves.get(j)))
-                        System.out.println("wrong one!!!");
-                    moves.add(ownPieces.get(i).square + "-" + ownPieces.get(i).validMoves.get(j));
-                    System.out.println(ownPieces.get(i).square + "-" + ownPieces.get(i).validMoves.get(j));
+
+    public void updateMoves(String s) {
+        moves += " "+s;
+    }
+
+    public static class ChessBot {
+        private Process stockfish;
+        private BufferedReader reader;
+        private OutputStreamWriter writer;
+
+        public boolean startEngine() {
+            try {
+                stockfish = new ProcessBuilder("engines\\stockfish\\stockfish-windows-x86-64-avx2.exe").start();
+                reader = new BufferedReader(new InputStreamReader(stockfish.getInputStream()));
+                writer = new OutputStreamWriter(stockfish.getOutputStream());
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        public void sendCommand(String command) throws IOException {
+            writer.write(command + "\n");
+            writer.flush();
+        }
+
+        public String getOutput() throws IOException {
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+                if (line.equals("uciok") || line.equals("readyok") || line.contains("bestmove")){
+                    break;
                 }
             }
-        }
-        return moves;
-    }
-    public int evaluate(){
-        return 0;
-    }
-    public void search(Piece[] position, int depth){
-        Random random = new Random();
-        int initialSquare = 0;
-        int bestMove = 0;
-        int movesCount = 0;
-        for(int i=0; i<ownPieces.size(); i++){
-            ownPieces.get(i).isValidMove(i,i,currentBoard);
-            movesCount += ownPieces.get(i).validMoves.size();
-        }
-        for(int i=0; i<ownPieces.size(); i++){
-
+            System.out.println(output.toString());
+            return output.toString();
         }
 
-    }
-    public void makeMove(){
-        if((board.isDraw || board.isCheckmate))
-            return;
-        currentBoard = board.pieces;
-        ArrayList<String> moves = getAllMoves(currentBoard);
-        System.out.println(moves.size());
-        int moveNum = random.nextInt(moves.size());
-        //splitting the string move
-        String[] move = moves.get(moveNum).split("-",2);
-        System.out.println("ownPieces -> " + ownPieces.size());
-        System.out.println(move[0] + " -> "+ move[1]);
-        if(board.isValidMove(Integer.parseInt(move[0]), Integer.parseInt(move[1])))
-            board.movePiece(currentBoard[Integer.parseInt(move[0])], Integer.parseInt(move[0]), Integer.parseInt(move[1]));
-        else{
-            if(!(board.isDraw || board.isCheckmate))
-                System.out.println("not Valid !!!");
+        public void stopEngine() {
+            try {
+                sendCommand("quit");
+                stockfish.destroy();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-    }
-
-    public void test(Piece[] position){
-        //TODO
     }
 }
+
+
