@@ -5,6 +5,7 @@
   <a href="https://www.codefactor.io/repository/github/bajahaw/chess"><img src="https://www.codefactor.io/repository/github/bajahaw/chess/badge" alt="CodeFactor" /></a>
 </div>
 
+
 This is a Java-based chess game implemented using Swing for the graphical user interface. The game includes all the standard rules of chess, including castling and pawn promotion.
 
 ## Stockfish
