@@ -3,6 +3,7 @@
 
 <div align="center">
   <a href="https://www.codefactor.io/repository/github/bajahaw/chess"><img src="https://www.codefactor.io/repository/github/bajahaw/chess/badge" alt="CodeFactor" /></a>
+  <img src="https://img.shields.io/badge/open%20source-yes-orange" alt="CodeFactor" />
 </div>
 
 ## Describtion
