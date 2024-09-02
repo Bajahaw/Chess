@@ -18,3 +18,5 @@ You can istall it from here: https://github.com/official-stockfish/Stockfish
 This project was for fun and not maintained any more.
 If you feel this code is shty or you have a problem or suggestion feel free to fix or use the issues section.
 
+## Screenshot
+![image](https://github.com/user-attachments/assets/218b1833-e9c1-44a5-8c11-7575c68db728)
