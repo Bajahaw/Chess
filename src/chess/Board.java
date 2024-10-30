@@ -178,9 +178,9 @@ public class Board extends JPanel implements MouseListener{
                     i++;
                 }
             }
-            if(part==3){}
-            if(part==4){}
-            if(part==5){}
+            // if(part==3){}
+            // if(part==4){}
+            // if(part==5){}
         }
         setPiecesMouseListener();
         King.bKSquare = localBKSquare;
@@ -280,9 +280,9 @@ public class Board extends JPanel implements MouseListener{
     }
 
     public void isDraw(int kSquare, Piece[] position) {
-        //TODO: implement draw BY repetition
-        //TODO: implement draw BY 50 moves
-        //TODO: implement draw BY insufficient material
+        //future: implement draw BY repetition
+        //future: implement draw BY 50 moves
+        //future: implement draw BY insufficient material
 
         boolean draw = true;
         if(((King)position[kSquare]).inCheck){
