@@ -8,9 +8,10 @@ import javax.swing.*;
 
 public class Frame extends JFrame {
     Board board;
-    Frame(){
+
+    Frame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1200 , 650);
+        this.setSize(1200, 650);
         this.setLocation(200, 50);
         this.setLayout(new FlowLayout(FlowLayout.LEFT, 100, 10));
 
@@ -19,9 +20,9 @@ public class Frame extends JFrame {
 
         this.add(board.containor);
         this.add(board.controlPanel);
-        
-        this.getContentPane().setBackground(new Color(50,50,50));
+
+        this.getContentPane().setBackground(new Color(50, 50, 50));
         this.setVisible(true);
     }
-    
+
 }

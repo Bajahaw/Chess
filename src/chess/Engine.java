@@ -11,24 +11,25 @@ public class Engine {
     ChessBot bot;
     String moves = "";
     Board board;
-    public Engine(Board board){
+
+    public Engine(Board board) {
         bot = new ChessBot();
         if (bot.startEngine()) {
             sendCommand("uci");
-            System.out.println(getOutput());
-//          bot.stopEngine();
+            // System.out.println(getOutput());
+            // bot.stopEngine();
         }
         this.board = board;
     }
 
-    public void makeMove(){
+    public void makeMove() {
         String move;
         sendCommand("position startpos moves" + moves);
         sendCommand("go movetime 100");
         move = getOutput().split("bestmove ")[1].split(" ")[0];
-        System.out.println(move);
-        int from = board.stringToSquare(move.substring(0,2));
-        int to = board.stringToSquare(move.substring(2,4));
+        // System.out.println(move);
+        int from = board.stringToSquare(move.substring(0, 2));
+        int to = board.stringToSquare(move.substring(2, 4));
         board.movePiece(board.pieces[from], from, to);
     }
 
@@ -41,7 +42,7 @@ public class Engine {
     }
 
     public void sendCommand(String s) {
-        System.out.println(s);
+        // System.out.println(s);
         try {
             bot.sendCommand(s);
         } catch (IOException e) {
@@ -50,7 +51,7 @@ public class Engine {
     }
 
     public void updateMoves(String s) {
-        moves += " "+s;
+        moves += " " + s;
     }
 
     public static class ChessBot {
@@ -80,11 +81,11 @@ public class Engine {
             String line;
             while ((line = reader.readLine()) != null) {
                 output.append(line).append("\n");
-                if (line.equals("uciok") || line.equals("readyok") || line.contains("bestmove")){
+                if (line.equals("uciok") || line.equals("readyok") || line.contains("bestmove")) {
                     break;
                 }
             }
-            System.out.println(output.toString());
+            // System.out.println(output.toString());
             return output.toString();
         }
 
